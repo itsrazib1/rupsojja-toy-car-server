@@ -11,7 +11,6 @@ app.use(cors());
 app.use(express.json());
 
 
-console.log(process.env.DB_PASS);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.4hmio3i.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -30,6 +29,7 @@ async function run() {
     await client.connect();
 
 const carCollection = client.db('carZone').collection('cars');
+const cartCollection = client.db('carZone').collection('cart');
 
 app.get('/cars', async(req , res) => {
     const carsor = carCollection.find();
@@ -48,6 +48,43 @@ const options = {
 
     const result = await carCollection.findOne(query,options );
     res.send(result);
+})
+
+
+// booking
+
+app.get('/cart', async(req, res) => {
+let query = {};
+if(req.query?.email){
+    query = {email: req.query.email}
+}
+    const result = await cartCollection.find(query).toArray();
+    res.send(result);
+  });
+  
+app.post('/toys',async (req,res)=>{
+  const newToys = req.body;
+  console.log(newToys);
+  const result = await carCollection.insertOne(newToys);
+  res.send(result);
+
+})
+
+
+
+
+app.post('/cart',async (req,res) => {
+    const cart = req.body;
+    console.log(cart);
+    const result = await cartCollection.insertOne(cart);
+    res.send(result);
+});
+
+app.delete('/cart/:id',async (req,res)=>{
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const result = await cartCollection.deleteOne(query);
+  res.send(result);
 })
 
     // Send a ping to confirm a successful connection
