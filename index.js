@@ -43,7 +43,7 @@ app.get('/cars/:id', async(req , res) => {
     const query = {_id: new ObjectId(id) }
 
 const options = {
-    projection: {title: 1 ,price: 1 , service_id: 1,img: 1},
+    projection: {name: 1 ,Price: 1 ,_id: 1,url: 1,Sellername: 1,Subcategory: 1,quantity: 1,Rating: 1,description:1,},
 };
 
     const result = await carCollection.findOne(query,options );
