@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+     client.connect();
 
     const carCollection = client.db("carZone").collection("cars");
     const cartCollection = client.db("carZone").collection("cart");
@@ -68,9 +68,8 @@ async function run() {
     app.put("/cars/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
-      const option = { upsert: true };
       const updatedCar = req.body;
-      const Car = {
+      const update = {
         $set: {
           name: updatedCar.name,
           url: updatedCar.url,
@@ -82,10 +81,12 @@ async function run() {
           Rating: updatedCar.Rating,
           description: updatedCar.description,
         }
-      }
-      const Ruselt = await carCollection.updateOne(filter,Car,option)
-      res.send(Ruselt)
+      };
+    
+      const result = await carCollection.updateOne(filter, update);
+      res.send(result);
     });
+    
     // booking
 
     app.get("/cart", async (req, res) => {
